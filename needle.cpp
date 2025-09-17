@@ -1,9 +1,3 @@
-//*****************************************************
-//
-// pratica4.cpp
-// Visualização 3D
-//
-//*****************************************************
 #include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
@@ -19,17 +13,34 @@ GLfloat needle_min_height = -10.0;
 GLfloat needle_height_change = 0.0;
 GLfloat needle_height_change_direction = 1.0;
 
-GLfloat base_height = 10.0;
-GLfloat base_width = 200.0;
-GLfloat base_depth = 200.0;
+GLfloat base_height = 2.5;
+GLfloat base_size_reference = 150.0;
+GLfloat base_size;
 GLfloat base_position_y = -50.0;
+GLfloat step_variance;
+GLfloat step_number = 0.0;
+GLfloat step_scale_factor = 1.1;
+int number_of_steps = 4;
 
 GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
 GLint specular_exponent = 100;
 GLfloat ambient_light[] = {0.2, 0.2, 0.2, 1.0};
-GLfloat diffuse_light[] = {0.8, 0.8, 0.8, 1.0};
 GLfloat specular_light[] = {1.0, 1.0, 1.0, 1.0};
-GLfloat light_position[] = {10.0, 40.0, 0.0, 1.0};
+
+GLfloat diffuse_light0[] = {0.8, 0.8, 0.8, 1.0};
+GLfloat light_position0[] = {0.0, 200.0, 0.0, 1.0};
+
+GLfloat diffuse_light1[] = {0.2, 0.8, 0.2, 1.0};
+GLfloat light_position1[] = {base_size_reference / 2.0f, -30.0, base_size_reference / 2.0f, 1.0};
+
+GLfloat diffuse_light2[] = {0.8, 0.2, 0.2, 1.0};
+GLfloat light_position2[] = {-base_size_reference / 2.0f, -30.0, base_size_reference / 2.0f, 1.0};
+
+GLfloat diffuse_light3[] = {0.2, 0.2, 0.8, 1.0};
+GLfloat light_position3[] = {base_size_reference / 2.0f, -30.0, -base_size_reference / 2.0f, 1.0};
+
+GLfloat diffuse_light4[] = {0.5, 0.4, 0.6, 1.0};
+GLfloat light_position4[] = {-base_size_reference / 2.0f, -30.0, -base_size_reference / 2.0f, 1.0};
 
 
 void DrawSword(void)
@@ -37,7 +48,7 @@ void DrawSword(void)
 	//glClear(GL_COLOR_BUFFER_BIT);
 	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glColor3f(0.8f, 0.8f, 0.8f);
+	glColor3f(0.95f, 0.95f, 0.95f);
 
 	glBegin(GL_QUADS);
 		glNormal3f(0.0, 1.0, 0.0);
@@ -114,52 +125,133 @@ void DrawSword(void)
 
 void DrawBase(void)
 {
-	glColor3f(0.4f, 0.4f, 0.4f);
+	base_size = base_size_reference;
+	step_variance = base_height;
+	step_number = 0.0;
+
+	glColor3f(0.65f, 0.65f, 0.65f);
 	glBegin(GL_QUADS);
 		glNormal3f(0.0, 1.0, 0.0);
-		glVertex3f(base_width / 2, base_position_y, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y, -base_depth / 2);
+		glVertex3f(base_size / 2, base_position_y, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y, -base_size / 2);
 
 		glNormal3f(0.0, -1.0, 0.0);
-		glVertex3f(base_width / 2, base_position_y - base_height, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y - base_height, -base_depth / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, -base_size / 2);
 
 		glNormal3f(1.0, 0.0, 0.0);
-		glVertex3f(base_width / 2, base_position_y, base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y - base_height, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y - base_height, base_depth / 2);
+		glVertex3f(base_size / 2, base_position_y, base_size / 2);
+		glVertex3f(base_size / 2, base_position_y, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, base_size / 2);
 
 		glNormal3f(0.0, 0.0, 1.0);
-		glVertex3f(base_width / 2, base_position_y, base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y - base_height, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y, base_depth / 2);
+		glVertex3f(base_size / 2, base_position_y, base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y, base_size / 2);
 
 		glNormal3f(-1.0, 0.0, 0.0);
-		glVertex3f(-base_width / 2, base_position_y, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, -base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y, -base_depth / 2);
+		glVertex3f(-base_size / 2, base_position_y, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, -base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y, -base_size / 2);
 
 		glNormal3f(0.0, 0.0, -1.0);
-		glVertex3f(-base_width / 2, base_position_y, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y, -base_depth / 2);
-		glVertex3f(base_width / 2, base_position_y - base_height, -base_depth / 2);
-		glVertex3f(-base_width / 2, base_position_y - base_height, -base_depth / 2);
+		glVertex3f(-base_size / 2, base_position_y, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y, -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - base_height, -base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - base_height, -base_size / 2);
+	glEnd();
+
+	for (int i = 0; i < number_of_steps; i++) {
+		base_size *= step_scale_factor;
+		step_number += 1.0;
+
+		glBegin(GL_QUADS);
+			glNormal3f(0.0, 1.0, 0.0);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+
+			glNormal3f(0.0, -1.0, 0.0);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+
+			glNormal3f(1.0, 0.0, 0.0);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+
+			glNormal3f(0.0, 0.0, 1.0);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+
+			glNormal3f(-1.0, 0.0, 0.0);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+
+			glNormal3f(0.0, 0.0, -1.0);
+			glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+			glVertex3f(base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+			glVertex3f(-base_size / 2, base_position_y - base_height - (step_variance * step_number), -base_size / 2);
+		glEnd();
+	}
+
+	base_size *= 5;
+	step_number += 1.0;
+
+	glColor3f(0.3f, 0.8f, 0.4f);
+	glBegin(GL_QUADS);
+		glNormal3f(0.0, 1.0, 0.0);
+		glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), base_size / 2);
+		glVertex3f(-base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
+		glVertex3f(base_size / 2, base_position_y - (step_variance * step_number), -base_size / 2);
 	glEnd();
 
 	// glutSwapBuffers();
+}
+
+void DrawSpike(void)
+{
+	glutWireCone(5.0, 20.0, 16, 16);
 }
 
 void Draw(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawBase();
+	DrawSpike();
+	glPushMatrix();
+		glTranslated(base_size / 2.0, base_position_y, base_size / 2.0);
+		DrawSpike();
+	glPopMatrix();
+	// glPushMatrix();
+	// 	glTranslated(-base_size / 2.0, base_position_y, base_size / 2.0);
+	// 	DrawSpike();
+	// glPopMatrix();
+	// glPushMatrix();
+	// 	glTranslated(base_size / 2.0, base_position_y, -base_size / 2.0);
+	// 	DrawSpike();
+	// glPopMatrix();
+	// glPushMatrix();
+	// 	glTranslated(-base_size / 2.0, base_position_y, -base_size / 2.0);
+	// 	DrawSpike();
+	// glPopMatrix();
 
 	glPushMatrix();
 		glTranslated(0.0, needle_height_change, 0.0);
@@ -183,9 +275,29 @@ void Initialize(void)
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light1);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position1);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light2);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position2);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light3);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position3);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light4);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_light);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position4);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_LIGHTING);
@@ -202,7 +314,7 @@ void SetGLParameters(void)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(angle, fAspect, 0.1, 1000);
+	gluPerspective(angle, fAspect, 0.1, 10000);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -255,7 +367,7 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 	switch (key) {
 		case ' ': // restaura posição inicial da camera
 			camera_rotation_angle = 0;
-			// camera_rotation_radius = 100;
+			camera_rotation_radius = 200;
 			xcamera = camera_rotation_radius * cos(camera_rotation_angle);
 			zcamera = camera_rotation_radius * sin(camera_rotation_angle);
 
