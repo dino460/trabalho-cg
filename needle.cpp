@@ -378,25 +378,27 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 			break;
 
 		case 'w':
-			// xlookat += 10;
-			xcamera -= 10;
-			camera_rotation_radius -= 10;
+			xcamera -= 10 * cos(camera_rotation_angle);
+    		zcamera -= 10 * sin(camera_rotation_angle);
+
+    		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
 			break;
 
 		case 'a':
-			// zlookat += 10;
-
+			zcamera -= 10;
+			zlookat += 10;
 			break;
 
 		case 's':
-			// xlookat -= 10;
-			xcamera += 10;
-			camera_rotation_radius += 10;
-			break;
+			xcamera += 10 * cos(camera_rotation_angle);
+    		zcamera += 10 * sin(camera_rotation_angle);
+			
+    		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
+    		break;
 
 		case 'd':
-			// zlookat -= 10;
-
+			zlookat -= 10;
+			zcamera += 10;
 			break;
 
 		case 'q':
