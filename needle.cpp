@@ -347,12 +347,12 @@ void SpecialKeys(int key, int x, int y)
 	}
 
 	if (key == GLUT_KEY_RIGHT) {
-		camera_rotation_angle += 0.1;
+		camera_rotation_angle -= 0.1;
 		xcamera = camera_rotation_radius * cos(camera_rotation_angle);
 		zcamera = camera_rotation_radius * sin(camera_rotation_angle);
 	}
 	if (key == GLUT_KEY_LEFT) {
-		camera_rotation_angle -= 0.1;
+		camera_rotation_angle += 0.1;
 		xcamera = camera_rotation_radius * cos(camera_rotation_angle);
 		zcamera = camera_rotation_radius * sin(camera_rotation_angle);
 	}
@@ -385,7 +385,10 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 			break;
 
 		case 'a':
-			zcamera -= 10;
+			xcamera -= 10 * cos(camera_rotation_angle);
+    		zcamera -= 10 * sin(camera_rotation_angle);
+
+    		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
 			zlookat += 10;
 			break;
 
@@ -398,7 +401,10 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 
 		case 'd':
 			zlookat -= 10;
-			zcamera += 10;
+			xcamera += 10 * cos(camera_rotation_angle);
+    		zcamera += 10 * sin(camera_rotation_angle);
+			
+    		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
 			break;
 
 		case 'q':
