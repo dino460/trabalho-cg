@@ -3,6 +3,8 @@
 #include <GL/glut.h>
 #include <cmath>
 GLfloat angle, fAspect, width, height, xcamera, ycamera, zcamera, xlookat, ylookat, zlookat, camera_rotation_angle, camera_rotation_radius = 200;
+GLboolean stab = false;
+GLboolean go_down = false;
 
 GLfloat hilt_width = 2.0;
 GLfloat hilt_height = 20.0;
@@ -14,13 +16,13 @@ GLfloat needle_height_change = 0.0;
 GLfloat needle_height_change_direction = 1.0;
 
 GLfloat base_height = 2.5;
-GLfloat base_size_reference = 150.0;
+GLfloat base_size_reference = 100.0;
 GLfloat base_size;
 GLfloat base_position_y = -50.0;
 GLfloat step_variance;
 GLfloat step_number = 0.0;
 GLfloat step_scale_factor = 1.1;
-int number_of_steps = 4;
+GLint number_of_steps = 4;
 
 GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
 GLint specular_exponent = 100;
@@ -31,16 +33,16 @@ GLfloat diffuse_light0[] = {0.8, 0.8, 0.8, 1.0};
 GLfloat light_position0[] = {0.0, 200.0, 0.0, 1.0};
 
 GLfloat diffuse_light1[] = {0.2, 0.8, 0.2, 1.0};
-GLfloat light_position1[] = {base_size_reference / 2.0f, -30.0, base_size_reference / 2.0f, 1.0};
+GLfloat light_position1[] = {base_size_reference / 2.0f, -15.0, base_size_reference / 2.0f, 1.0};
 
 GLfloat diffuse_light2[] = {0.8, 0.2, 0.2, 1.0};
-GLfloat light_position2[] = {-base_size_reference / 2.0f, -30.0, base_size_reference / 2.0f, 1.0};
+GLfloat light_position2[] = {-base_size_reference / 2.0f, -15.0, base_size_reference / 2.0f, 1.0};
 
 GLfloat diffuse_light3[] = {0.2, 0.2, 0.8, 1.0};
-GLfloat light_position3[] = {base_size_reference / 2.0f, -30.0, -base_size_reference / 2.0f, 1.0};
+GLfloat light_position3[] = {base_size_reference / 2.0f, -15.0, -base_size_reference / 2.0f, 1.0};
 
 GLfloat diffuse_light4[] = {0.5, 0.4, 0.6, 1.0};
-GLfloat light_position4[] = {-base_size_reference / 2.0f, -30.0, -base_size_reference / 2.0f, 1.0};
+GLfloat light_position4[] = {-base_size_reference / 2.0f, -15.0, -base_size_reference / 2.0f, 1.0};
 
 
 void DrawSword(void)
@@ -235,29 +237,23 @@ void Draw(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawBase();
-	DrawSpike();
-	glPushMatrix();
-		glTranslated(base_size / 2.0, base_position_y, base_size / 2.0);
-		DrawSpike();
-	glPopMatrix();
-	// glPushMatrix();
-	// 	glTranslated(-base_size / 2.0, base_position_y, base_size / 2.0);
-	// 	DrawSpike();
-	// glPopMatrix();
-	// glPushMatrix();
-	// 	glTranslated(base_size / 2.0, base_position_y, -base_size / 2.0);
-	// 	DrawSpike();
-	// glPopMatrix();
-	// glPushMatrix();
-	// 	glTranslated(-base_size / 2.0, base_position_y, -base_size / 2.0);
-	// 	DrawSpike();
-	// glPopMatrix();
 
-	glPushMatrix();
-		glTranslated(0.0, needle_height_change, 0.0);
-		glRotated(needle_rotation, 0.0, 1.0, 0.0);
-		DrawSword();
-	glPopMatrix();
+	if (!stab)
+	{
+		glPushMatrix();
+			glTranslated(0.0, needle_height_change, 0.0);
+			glRotated(needle_rotation, 0.0, 1.0, 0.0);
+			DrawSword();
+		glPopMatrix();
+	}
+	else
+	{
+		glPushMatrix();
+			glTranslated(0.0, needle_height_change, 0.0);
+			glRotated(needle_rotation, 0.0, 1.0, 0.0);
+			DrawSword();
+		glPopMatrix();
+	}
 	glutSwapBuffers();
 	glFlush();
 }
@@ -365,7 +361,7 @@ void SpecialKeys(int key, int x, int y)
 // Função callback chamada para gerenciar teclado
 void KeyboardManagement(unsigned char key, int x, int y) {
 	switch (key) {
-		case ' ': // restaura posição inicial da camera
+		case 'r': // restaura posição inicial da camera
 			camera_rotation_angle = 0;
 			camera_rotation_radius = 200;
 			xcamera = camera_rotation_radius * cos(camera_rotation_angle);
@@ -395,7 +391,7 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 		case 's':
 			xcamera += 10 * cos(camera_rotation_angle);
     		zcamera += 10 * sin(camera_rotation_angle);
-			
+
     		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
     		break;
 
@@ -403,7 +399,7 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 			zlookat -= 10;
 			xcamera += 10 * cos(camera_rotation_angle);
     		zcamera += 10 * sin(camera_rotation_angle);
-			
+
     		camera_rotation_radius = sqrt(xcamera*xcamera + zcamera*zcamera);
 			break;
 
@@ -415,6 +411,10 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 			ylookat -= 10;
 			break;
 
+		case ' ':
+			stab = !stab;
+			break;
+
 
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   //aplica o zBuffer
@@ -424,14 +424,37 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 
 //função callback que será chamada após o tempo especificado
 void TimeControl(int value) {
-	needle_rotation += 5;
-	needle_height_change += needle_height_change_direction * 0.5;
-	if (needle_height_change > needle_max_height)
+	if (!stab)
 	{
-		needle_height_change_direction = -1.0;
-	} else if (needle_height_change < needle_min_height)
+		needle_rotation += 5;
+		needle_height_change += needle_height_change_direction * 0.5;
+		if (needle_height_change > needle_max_height)
+		{
+			needle_height_change_direction = -1.0;
+		}
+		else if (needle_height_change < needle_min_height)
+		{
+			needle_height_change_direction = 1.0;
+		}
+	}
+	else
 	{
-		needle_height_change_direction = 1.0;
+		needle_height_change += needle_height_change_direction * 0.5;
+		if (!go_down)
+		{
+			needle_height_change_direction = 5.0;
+			needle_rotation += 50;
+
+			if (needle_height_change >= needle_max_height * 5.0)
+			{
+				go_down = true;
+				needle_height_change_direction = -20.0;
+			}
+		}
+		else if (needle_height_change < needle_min_height * 3.5)
+		{
+			needle_height_change_direction = 0.0;
+		}
 	}
 	// Redesenha a cena e executa o timer novamente para ter uma animacao continua
 	glutPostRedisplay();
