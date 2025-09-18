@@ -413,6 +413,7 @@ void KeyboardManagement(unsigned char key, int x, int y) {
 
 		case ' ':
 			stab = !stab;
+			go_down = false;
 			break;
 
 
